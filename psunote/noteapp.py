@@ -90,9 +90,10 @@ def update_note(tag_name):
 
     form = forms.NoteForm()
     form_title = notes.title
+    form_description = notes.description
     if not form.validate_on_submit():
         print("error", form.errors)
-        return flask.render_template("update_note.html",form=form,form_title=form_title)
+        return flask.render_template("update_note.html",form=form,form_title=form_title,form_description=form_description)
     
     note = models.Note(title=tag_name)
     form.populate_obj(note)
