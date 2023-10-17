@@ -76,16 +76,11 @@ def tags_view(tag_name):
     )
 
 
-@app.route("/tags/<tag_name>/update_note",methods=["GET", "POST"])
-def update_note(tag_name):
+@app.route("/tags/<tag_id>/update_note",methods=["GET", "POST"])
+def update_note(tag_id):
     db = models.db
-    tag = (
-        db.session.execute(db.select(models.Tag).where(models.Tag.name == tag_name))
-        .scalars()
-        .first()
-    )
     notes = db.session.execute(
-        db.select(models.Note).where(models.Note.tags.any(id=tag.id))
+        db.select(models.Note).where(models.Note.tags.any(id=tag_id))
     ).scalars().first()
 
     form = forms.NoteForm()
@@ -95,7 +90,7 @@ def update_note(tag_name):
         print(form.errors)
         return flask.render_template("update_note.html",form=form,form_title=form_title,form_description=form_description)
     
-    note = models.Note(title=tag_name)
+    note = models.Note(id=tag_id)
     form.populate_obj(note)
     notes.description = form.description.data
     notes.title = form.title.data
@@ -103,14 +98,14 @@ def update_note(tag_name):
 
     return flask.redirect(flask.url_for("index"))
 
-@app.route("/tags/<tag_name>/update_tags",methods=["GET", "POST"])
-def update_tags(tag_name):
+@app.route("/tags/<tag_id>/update_tags",methods=["GET", "POST"])
+def update_tags(tag_id):
     db = models.db
     tag = (
-        db.session.execute(db.select(models.Tag).where(models.Tag.name == tag_name))
-        .scalars()
-        .first()
-    )
+            db.session.execute(db.select(models.Tag).where(models.Tag.id == tag_id))
+            .scalars()
+            .first()
+        )
 
     form = forms.TagsForm()
     form_name = tag.name
@@ -119,31 +114,51 @@ def update_tags(tag_name):
         print(form.errors)
         return flask.render_template("update_tags.html",form=form,form_name=form_name)
     
-    note = models.Note(title=tag_name)
+    note = models.Note(id=tag_id)
     form.populate_obj(note)
     tag.name = form.name.data
     db.session.commit()
 
     return flask.redirect(flask.url_for("index"))
 
-@app.route("/tags/<tag_name>/delete_note",methods=["GET", "POST"])
-def delete_note(tag_name):
+@app.route("/tags/<tag_id>/delete_note",methods=["GET", "POST"])
+def delete_note(tag_id):
     db = models.db
-    tag = (
-        db.session.execute(db.select(models.Tag).where(models.Tag.name == tag_name))
-        .scalars()
-        .first()
-    )
     notes = db.session.execute(
-        db.select(models.Note).where(models.Note.tags.any(id=tag.id))
+        db.select(models.Note).where(models.Note.tags.any(id=tag_id))
     ).scalars().first()
-
     notes.description = ""
     db.session.commit()
 
     return flask.redirect(flask.url_for("index"))
 
 
+
+@app.route("/tags/<tag_id>/delete_tags",methods=["GET", "POST"])
+def delete_tags(tag_id):
+    db = models.db
+    tag = (
+        db.session.execute(db.select(models.Tag).where(models.Tag.id == tag_id))
+        .scalars()
+        .first()
+    )
+
+    tag.name = ""
+    db.session.commit()
+
+    return flask.redirect(flask.url_for("index"))
+
+@app.route("/tags/<tag_id>/delete",methods=["GET", "POST"])
+def delete(tag_id):
+    db = models.db
+
+    notes = db.session.execute(
+        db.select(models.Note).where(models.Note.tags.any(id=tag_id))
+    ).scalars().first()
+    
+    db.session.delete(notes)
+    db.session.commit()
+    return flask.redirect(flask.url_for("index"))
 
 
 if __name__ == "__main__":

@@ -16,9 +16,12 @@
       Tags: 
       {% for t in note.tags %}
         <a href="{{ url_for('tags_view', tag_name=t.name) }}">{{ t.name }}</a>
-        <div><a href="{{ url_for('update_note', tag_name=t.name) }}">edit note</a></div>
-        <div><a href="{{ url_for('update_tags', tag_name=t.name) }}">edit tags</a></div>
-        <div><a href="{{ url_for('delete_note', tag_name=t.name) }}">delete note</a></div>
+        <div><a href="{{ url_for('update_note', tag_id=t.id) }}">edit note</a></div>
+        <div><a href="{{ url_for('update_tags', tag_id=t.id) }}">edit tags</a></div>
+        <div><a href="{{ url_for('delete_note', tag_id=t.id) }}">delete note</a></div>
+        <div><a href="{{ url_for('delete_tags', tag_id=t.id) }}">delete tags</a></div>
+        <div><a href="{{ url_for('delete', tag_id=t.id) }}">delete all</a></div>
+
     {% endfor %}
       Last update: {{ note.updated_date }}
     </div>
