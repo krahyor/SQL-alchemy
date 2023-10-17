@@ -38,6 +38,12 @@ BaseNoteForm = model_form(
     models.Note, base_class=FlaskForm, exclude=["created_date", "updated_date"]
 )
 
+BasetagsForm = model_form(
+    models.Tag ,base_class=FlaskForm, exclude=["created_date", "updated_date"]
+)
 
 class NoteForm(BaseNoteForm):
+    tags = TagListField("Tag")
+
+class TagsForm(BasetagsForm):
     tags = TagListField("Tag")

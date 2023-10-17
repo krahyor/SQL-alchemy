@@ -102,6 +102,32 @@ def update_note(tag_name):
 
     return flask.redirect(flask.url_for("index"))
 
+@app.route("/tags/<tag_name>/update_tags",methods=["GET", "POST"])
+def update_tags(tag_name):
+    db = models.db
+    tag = (
+        db.session.execute(db.select(models.Tag).where(models.Tag.name == tag_name))
+        .scalars()
+        .first()
+    )
+
+    form = forms.TagsForm()
+    form_name = tag.name
+
+    if not form.validate_on_submit():
+        print("error", form.errors)
+        return flask.render_template("update_tags.html",form=form,form_name=form_name)
+    
+    note = models.Note(title=tag_name)
+    form.populate_obj(note)
+    tag.name = form.name.data
+    db.session.commit()
+
+    return flask.redirect(flask.url_for("index"))
+
+@app.route("/tags/<tag_name>/delete",methods=["GET", "POST"])
+def delete():
+    return 
 
 if __name__ == "__main__":
     app.run(debug=True)
