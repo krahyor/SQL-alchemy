@@ -16,8 +16,8 @@
       Tags: 
       {% for t in note.tags %}
         <a href="{{ url_for('tags_view', tag_name=t.name) }}">{{ t.name }}</a>
+
     {% endfor %}
-      <br>
       Last update: {{ note.updated_date }}
     </div>
   </div>

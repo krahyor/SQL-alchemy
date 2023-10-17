@@ -39,21 +39,7 @@ def notes_create():
     note.tags = []
 
     db = models.db
-    for tag_name in form.tags.data:
-        tag = (
-            db.session.execute(db.select(models.Tag).where(models.Tag.name == tag_name))
-            .scalars()
-            .first()
-        )
-
-        if not tag:
-            tag = models.Tag(name=tag_name)
-            db.session.add(tag)
-
-        note.tags.append(tag)
-
-    db.session.add(note)
-    db.session.commit()
+    print("db",db)
 
     return flask.redirect(flask.url_for("index"))
 
@@ -69,12 +55,38 @@ def tags_view(tag_name):
     notes = db.session.execute(
         db.select(models.Note).where(models.Note.tags.any(id=tag.id))
     ).scalars()
-
     return flask.render_template(
         "tags-view.html",
         tag_name=tag_name,
         notes=notes,
     )
+
+
+@app.route("/tags/<tag_name>/update_note",methods=["GET", "POST"])
+def update_note(tag_name):
+    db = models.db
+    tag = (
+        db.session.execute(db.select(models.Tag).where(models.Tag.name == tag_name))
+        .scalars()
+        .first()
+    )
+    notes = db.session.execute(
+        db.select(models.Note).where(models.Note.tags.any(id=tag.id))
+    ).scalars().first()
+
+    form = forms.NoteForm()
+    form_title = notes.title
+    if not form.validate_on_submit():
+        print("error", form.errors)
+        return flask.render_template("update_note.html",form=form,form_title=form_title)
+    
+    note = models.Note(title=tag_name)
+    form.populate_obj(note)
+    notes.description = form.description.data
+    notes.title = form.title.data
+    db.session.commit()
+
+    return flask.redirect(flask.url_for("index"))
 
 
 if __name__ == "__main__":
