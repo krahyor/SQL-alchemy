@@ -77,7 +77,7 @@ def tags_view(tag_name):
 
 
 @app.route("/tags/<tag_id>/update_note",methods=["GET", "POST"])
-def update_note(tag_id):
+def update_note(tag_id): # แก้ไข Note และสามารถเปลี่ยนชื่อ Title ได้
     db = models.db
     notes = db.session.execute(
         db.select(models.Note).where(models.Note.tags.any(id=tag_id))
@@ -99,7 +99,7 @@ def update_note(tag_id):
     return flask.redirect(flask.url_for("index"))
 
 @app.route("/tags/<tag_id>/update_tags",methods=["GET", "POST"])
-def update_tags(tag_id):
+def update_tags(tag_id): # แก้ไข Tags ได้
     db = models.db
     tag = (
             db.session.execute(db.select(models.Tag).where(models.Tag.id == tag_id))
@@ -122,7 +122,7 @@ def update_tags(tag_id):
     return flask.redirect(flask.url_for("index"))
 
 @app.route("/tags/<tag_id>/delete_note",methods=["GET", "POST"])
-def delete_note(tag_id):
+def delete_note(tag_id): # ลบ Note เพื่ออย่างเดียวไม่ได้ลบ Title 
     db = models.db
     notes = db.session.execute(
         db.select(models.Note).where(models.Note.tags.any(id=tag_id))
@@ -135,7 +135,7 @@ def delete_note(tag_id):
 
 
 @app.route("/tags/<tag_id>/delete_tags",methods=["GET", "POST"])
-def delete_tags(tag_id):
+def delete_tags(tag_id): # ลบ Tags ได้อย่างเดียว
     db = models.db
     tag = (
         db.session.execute(db.select(models.Tag).where(models.Tag.id == tag_id))
@@ -149,7 +149,7 @@ def delete_tags(tag_id):
     return flask.redirect(flask.url_for("index"))
 
 @app.route("/tags/<tag_id>/delete",methods=["GET", "POST"])
-def delete(tag_id):
+def delete(tag_id): # ลบทั้งหมดที่เกี่ยวกับ Tags
     db = models.db
 
     notes = db.session.execute(
