@@ -92,7 +92,7 @@ def update_note(tag_name):
     form_title = notes.title
     form_description = notes.description
     if not form.validate_on_submit():
-        print("error", form.errors)
+        print(form.errors)
         return flask.render_template("update_note.html",form=form,form_title=form_title,form_description=form_description)
     
     note = models.Note(title=tag_name)
@@ -116,7 +116,7 @@ def update_tags(tag_name):
     form_name = tag.name
 
     if not form.validate_on_submit():
-        print("error", form.errors)
+        print(form.errors)
         return flask.render_template("update_tags.html",form=form,form_name=form_name)
     
     note = models.Note(title=tag_name)
@@ -126,9 +126,25 @@ def update_tags(tag_name):
 
     return flask.redirect(flask.url_for("index"))
 
-@app.route("/tags/<tag_name>/delete",methods=["GET", "POST"])
-def delete():
-    return 
+@app.route("/tags/<tag_name>/delete_note",methods=["GET", "POST"])
+def delete_note(tag_name):
+    db = models.db
+    tag = (
+        db.session.execute(db.select(models.Tag).where(models.Tag.name == tag_name))
+        .scalars()
+        .first()
+    )
+    notes = db.session.execute(
+        db.select(models.Note).where(models.Note.tags.any(id=tag.id))
+    ).scalars().first()
+
+    notes.description = ""
+    db.session.commit()
+
+    return flask.redirect(flask.url_for("index"))
+
+
+
 
 if __name__ == "__main__":
     app.run(debug=True)

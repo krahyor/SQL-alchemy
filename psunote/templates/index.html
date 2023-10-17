@@ -18,6 +18,7 @@
         <a href="{{ url_for('tags_view', tag_name=t.name) }}">{{ t.name }}</a>
         <div><a href="{{ url_for('update_note', tag_name=t.name) }}">edit note</a></div>
         <div><a href="{{ url_for('update_tags', tag_name=t.name) }}">edit tags</a></div>
+        <div><a href="{{ url_for('delete_note', tag_name=t.name) }}">delete note</a></div>
     {% endfor %}
       Last update: {{ note.updated_date }}
     </div>
