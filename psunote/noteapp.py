@@ -8,7 +8,7 @@ app = flask.Flask(__name__)
 app.config["SECRET_KEY"] = "This is secret key"
 app.config[
     "SQLALCHEMY_DATABASE_URI"
-] = "postgresql://coe:CoEpasswd@localhost:5432/coedb"
+] = "sqlite:///database.db"
 
 models.init_app(app)
 

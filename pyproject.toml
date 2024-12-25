@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "sql-alchemy"
+version = "0.1.0"
+description = ""
+authors = ["krahyor <gimgim611@email.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+flask = "^3.1.0"
+flask-wtf = "^1.2.2"
+flask-sqlalchemy = "^3.1.1"
+wtforms-sqlalchemy = "^0.4.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
