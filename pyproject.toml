@@ -11,6 +11,10 @@ flask = "^3.1.0"
 flask-wtf = "^1.2.2"
 flask-sqlalchemy = "^3.1.1"
 wtforms-sqlalchemy = "^0.4.2"
+flask-bcrypt = "^1.0.1"
+sqlalchemy-serializer = "^1.4.22"
+flask-migrate = "^4.0.7"
+flask-login = "^0.6.3"
 
 
 [build-system]

@@ -1,6 +1,6 @@
 from wtforms_sqlalchemy.orm import model_form
-from flask_wtf import FlaskForm
-from wtforms import Field, widgets
+from flask_wtf import FlaskForm, file
+from wtforms import Field, widgets, validators, fields
 
 import models
 
@@ -35,16 +35,63 @@ class TagListField(Field):
 
 
 BaseNoteForm = model_form(
-    models.Note, base_class=FlaskForm, exclude=["created_date", "updated_date"], db_session=models.db.session
+    models.Note,
+    base_class=FlaskForm,
+    exclude=["created_date", "updated_date"],
+    db_session=models.db.session,
 )
 
 BaseTagsForm = model_form(
-    models.Tag ,base_class=FlaskForm, exclude=["created_date", "updated_date"], db_session=models.db.session
-
+    models.Tag,
+    base_class=FlaskForm,
+    exclude=["created_date", "updated_date"],
+    db_session=models.db.session,
 )
+
+BaseUserForm = model_form(
+    models.User,
+    base_class=FlaskForm,
+    exclude=["created_date", "updated_date", "status", "_password_hash"],
+    db_session=models.db.session,
+)
+
+BaseUploadForm = model_form(
+    models.Upload,
+    base_class=FlaskForm,
+    db_session=models.db.session,
+    exclude=["created_date", "updated_date", "status", "filename"],
+)
+
+
+class UploadForm(BaseUploadForm):
+    file = fields.FileField(
+        "Upload team image (png or jpg) , Recommended image size: 250(px) x 230(px)",
+        validators=[
+            file.FileAllowed(["png", "jpg", "jpeg"], "You can use only jpg , png"),
+        ],
+    )
+
+
+class LoginForm(FlaskForm):
+    username = fields.StringField("username", [validators.DataRequired()])
+    password = fields.PasswordField("password", [validators.DataRequired()])
+
+
+class RegisterForm(BaseUserForm):
+    username = fields.StringField(
+        "username", [validators.DataRequired(), validators.length(min=6)]
+    )
+    password = fields.PasswordField(
+        "password", [validators.DataRequired(), validators.length(min=6)]
+    )
+    name = fields.StringField(
+        "name", [validators.DataRequired(), validators.length(min=6)]
+    )
+
 
 class NoteForm(BaseNoteForm):
     tags = TagListField("Tag")
+
 
 class TagsForm(BaseTagsForm):
     tags = TagListField("Tag")
